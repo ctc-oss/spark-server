@@ -52,6 +52,7 @@ const serverSentEventsMiddleware = (): Middleware => (
     'Cache-Control': 'no-cache',
     Connection: 'keep-alive',
     'Content-Type': 'text/event-stream',
+    'X-Accel-Buffering': 'no',
   });
 
   next();
@@ -147,6 +148,11 @@ export default (
               ...values,
               body,
             );
+
+            // For SSE routes we don't return a result
+            if (functionResult == null) {
+              return;
+            }
 
             if (functionResult.then) {
               const result = !serverSentEvents

@@ -80,7 +80,8 @@ var serverSentEventsMiddleware = function serverSentEventsMiddleware() {
     response.writeHead(200, {
       'Cache-Control': 'no-cache',
       Connection: 'keep-alive',
-      'Content-Type': 'text/event-stream'
+      'Content-Type': 'text/event-stream',
+      'X-Accel-Buffering': 'no'
     });
 
     next();
@@ -160,52 +161,62 @@ exports.default = function (app, container, controllers, settings) {
                   });
                   functionResult = mappedFunction.call.apply(mappedFunction, [controllerInstance].concat((0, _toConsumableArray3.default)(values), [body]));
 
+                  // For SSE routes we don't return a result
+
+                  if (!(functionResult == null)) {
+                    _context.next = 13;
+                    break;
+                  }
+
+                  return _context.abrupt('return');
+
+                case 13:
                   if (!functionResult.then) {
-                    _context.next = 25;
+                    _context.next = 27;
                     break;
                   }
 
                   if (serverSentEvents) {
-                    _context.next = 18;
+                    _context.next = 20;
                     break;
                   }
 
-                  _context.next = 15;
+                  _context.next = 17;
                   return _promise2.default.race([functionResult, new _promise2.default(function (resolve, reject) {
                     return setTimeout(function () {
                       return reject(new Error('timeout'));
                     }, settings.API_TIMEOUT);
                   })]);
 
-                case 15:
+                case 17:
                   _context.t0 = _context.sent;
-                  _context.next = 21;
+                  _context.next = 23;
                   break;
 
-                case 18:
-                  _context.next = 20;
+                case 20:
+                  _context.next = 22;
                   return functionResult;
 
-                case 20:
+                case 22:
                   _context.t0 = _context.sent;
 
-                case 21:
+                case 23:
                   result = _context.t0;
 
 
                   response.status((0, _nullthrows2.default)(result).status).json((0, _nullthrows2.default)(result).data);
-                  _context.next = 26;
+                  _context.next = 28;
                   break;
 
-                case 25:
+                case 27:
                   response.status(functionResult.status).json(functionResult.data);
 
-                case 26:
-                  _context.next = 32;
+                case 28:
+                  _context.next = 34;
                   break;
 
-                case 28:
-                  _context.prev = 28;
+                case 30:
+                  _context.prev = 30;
                   _context.t1 = _context['catch'](8);
                   httpError = new _HttpError2.default(_context.t1);
 
@@ -214,12 +225,12 @@ exports.default = function (app, container, controllers, settings) {
                     ok: false
                   });
 
-                case 32:
+                case 34:
                 case 'end':
                   return _context.stop();
               }
             }
-          }, _callee, undefined, [[8, 28]]);
+          }, _callee, undefined, [[8, 30]]);
         }));
 
         return function (_x2, _x3) {
