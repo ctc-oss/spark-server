@@ -35,3 +35,6 @@ __test_data__
 *.pub.pem
 build
 .env
+
+# jetbrains
+*.iml
