@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+if [[ ! -z "$GITHUB_AUTH_TOKEN" ]]; then 
+  echo "---> using github token from environment"
+fi
+
+docker build --build-arg GITHUB_AUTH_TOKEN -t "$IMAGE_NAME" -f Dockerfile ../..

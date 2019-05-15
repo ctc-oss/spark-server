@@ -38,3 +38,6 @@ build
 
 # jetbrains
 *.iml
+
+# dont ignore docker hub hooks (due to build rule above)
+!**/hooks/build
