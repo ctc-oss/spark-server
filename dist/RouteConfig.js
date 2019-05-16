@@ -80,7 +80,7 @@ var serverSentEventsMiddleware = function serverSentEventsMiddleware() {
     response.writeHead(200, {
       'Cache-Control': 'no-cache',
       Connection: 'keep-alive',
-      'Content-Type': 'text/event-stream',
+      'Content-Type': 'text/event-stream;charset=UTF-8',
       'X-Accel-Buffering': 'no'
     });
 
