@@ -111,7 +111,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 var logger = _logger2.default.createModuleLogger(module);
 
-var KEEP_ALIVE_INTERVAL = 2000;
+var KEEP_ALIVE_INTERVAL = 9000;
 
 var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _route2.default)('/v2/ping'), _dec3 = (0, _anonymous2.default)(), _dec4 = (0, _httpVerb2.default)('get'), _dec5 = (0, _route2.default)('/v2/events/:eventNamePrefix?*'), _dec6 = (0, _serverSentEvents2.default)(), _dec7 = (0, _httpVerb2.default)('get'), _dec8 = (0, _route2.default)('/v2/devices/events/:eventNamePrefix?*'), _dec9 = (0, _serverSentEvents2.default)(), _dec10 = (0, _httpVerb2.default)('get'), _dec11 = (0, _route2.default)('/v2/devices/:deviceID/events/:eventNamePrefix?*'), _dec12 = (0, _serverSentEvents2.default)(), _dec13 = (0, _httpVerb2.default)('post'), _dec14 = (0, _route2.default)('/v2/devices/events'), (_class = function (_Controller) {
   (0, _inherits3.default)(EventsControllerV2, _Controller);

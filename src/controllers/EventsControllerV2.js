@@ -12,7 +12,7 @@ import eventToApi from '../lib/eventToApi';
 import Logger from '../lib/logger';
 const logger = Logger.createModuleLogger(module);
 
-const KEEP_ALIVE_INTERVAL = 2000;
+const KEEP_ALIVE_INTERVAL = 9000;
 
 class EventsControllerV2 extends Controller {
   _eventManager: EventManager;
