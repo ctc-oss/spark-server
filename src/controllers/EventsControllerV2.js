@@ -146,6 +146,7 @@ class EventsControllerV2 extends Controller {
   _pipeEvent(event: Event) {
     const eventMerged = { name: event.name, ...eventToApi(event) };
     try {
+      this.response.write(`event: ${event.name}\n`);
       this.response.write(`data: ${JSON.stringify(eventMerged)}\n\n`);
       this._updateLastEventDate();
     } catch (error) {

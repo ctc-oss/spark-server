@@ -335,6 +335,7 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
     value: function _pipeEvent(event) {
       var eventMerged = (0, _extends3.default)({ name: event.name }, (0, _eventToApi2.default)(event));
       try {
+        this.response.write('event: ' + event.name + '\n');
         this.response.write('data: ' + (0, _stringify2.default)(eventMerged) + '\n\n');
         this._updateLastEventDate();
       } catch (error) {
