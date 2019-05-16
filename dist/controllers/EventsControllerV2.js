@@ -325,7 +325,8 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
 
       return setInterval(function () {
         if (new Date() - _this3._lastEventDate >= KEEP_ALIVE_INTERVAL) {
-          _this3.response.write('\n');
+          _this3.response.write('event: heartbeat\n');
+          _this3.response.write('data: \n\n');
           _this3._updateLastEventDate();
         }
       }, KEEP_ALIVE_INTERVAL);

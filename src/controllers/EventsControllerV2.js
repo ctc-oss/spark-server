@@ -137,7 +137,8 @@ class EventsControllerV2 extends Controller {
 
     return setInterval(() => {
       if (new Date() - this._lastEventDate >= KEEP_ALIVE_INTERVAL) {
-        this.response.write('\n');
+        this.response.write('event: heartbeat\n');
+        this.response.write('data: \n\n');
         this._updateLastEventDate();
       }
     }, KEEP_ALIVE_INTERVAL);
