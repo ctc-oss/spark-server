@@ -12,10 +12,6 @@ var _stringify = require('babel-runtime/core-js/json/stringify');
 
 var _stringify2 = _interopRequireDefault(_stringify);
 
-var _promise = require('babel-runtime/core-js/promise');
-
-var _promise2 = _interopRequireDefault(_promise);
-
 var _toConsumableArray2 = require('babel-runtime/helpers/toConsumableArray');
 
 var _toConsumableArray3 = _interopRequireDefault(_toConsumableArray2);
@@ -115,7 +111,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 var logger = _logger2.default.createModuleLogger(module);
 
-var KEEP_ALIVE_INTERVAL = 9000;
+var KEEP_ALIVE_INTERVAL = 2000;
 
 var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _route2.default)('/v2/ping'), _dec3 = (0, _anonymous2.default)(), _dec4 = (0, _httpVerb2.default)('get'), _dec5 = (0, _route2.default)('/v2/events/:eventNamePrefix?*'), _dec6 = (0, _serverSentEvents2.default)(), _dec7 = (0, _httpVerb2.default)('get'), _dec8 = (0, _route2.default)('/v2/devices/events/:eventNamePrefix?*'), _dec9 = (0, _serverSentEvents2.default)(), _dec10 = (0, _httpVerb2.default)('get'), _dec11 = (0, _route2.default)('/v2/devices/:deviceID/events/:eventNamePrefix?*'), _dec12 = (0, _serverSentEvents2.default)(), _dec13 = (0, _httpVerb2.default)('post'), _dec14 = (0, _route2.default)('/v2/devices/events'), (_class = function (_Controller) {
   (0, _inherits3.default)(EventsControllerV2, _Controller);
@@ -161,24 +157,42 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
     }()
   }, {
     key: 'getEvents',
-    value: function () {
-      var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2(eventNamePrefix) {
-        var _eventManager;
+    value: function getEvents(eventNamePrefix) {
+      var _eventManager;
 
+      var subscriptionID = (_eventManager = this._eventManager).subscribe.apply(_eventManager, [eventNamePrefix, this._pipeEvent.bind(this)].concat((0, _toConsumableArray3.default)(this._getUserFilter())));
+      var keepAliveIntervalID = this._startKeepAlive();
+
+      this._closeStream(subscriptionID, keepAliveIntervalID);
+    }
+  }, {
+    key: 'getMyEvents',
+    value: function getMyEvents(eventNamePrefix) {
+      var subscriptionID = this._eventManager.subscribe(eventNamePrefix, this._pipeEvent.bind(this), (0, _extends3.default)({
+        mydevices: true
+      }, this._getUserFilter()));
+      var keepAliveIntervalID = this._startKeepAlive();
+
+      this._closeStream(subscriptionID, keepAliveIntervalID);
+    }
+  }, {
+    key: 'getDeviceEvents',
+    value: function () {
+      var _ref2 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee2(deviceID, eventNamePrefix) {
         var subscriptionID, keepAliveIntervalID;
         return _regenerator2.default.wrap(function _callee2$(_context2) {
           while (1) {
             switch (_context2.prev = _context2.next) {
               case 0:
-                subscriptionID = (_eventManager = this._eventManager).subscribe.apply(_eventManager, [eventNamePrefix, this._pipeEvent.bind(this)].concat((0, _toConsumableArray3.default)(this._getUserFilter())));
+                subscriptionID = this._eventManager.subscribe(eventNamePrefix, this._pipeEvent.bind(this), (0, _extends3.default)({
+                  deviceID: deviceID
+                }, this._getUserFilter()));
                 keepAliveIntervalID = this._startKeepAlive();
-                _context2.next = 4;
-                return this._closeStream(subscriptionID, keepAliveIntervalID);
 
-              case 4:
-                return _context2.abrupt('return', this.ok());
 
-              case 5:
+                this._closeStream(subscriptionID, keepAliveIntervalID);
+
+              case 3:
               case 'end':
                 return _context2.stop();
             }
@@ -186,74 +200,8 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
         }, _callee2, this);
       }));
 
-      function getEvents(_x2) {
+      function getDeviceEvents(_x2, _x3) {
         return _ref2.apply(this, arguments);
-      }
-
-      return getEvents;
-    }()
-  }, {
-    key: 'getMyEvents',
-    value: function () {
-      var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(eventNamePrefix) {
-        var subscriptionID, keepAliveIntervalID;
-        return _regenerator2.default.wrap(function _callee3$(_context3) {
-          while (1) {
-            switch (_context3.prev = _context3.next) {
-              case 0:
-                subscriptionID = this._eventManager.subscribe(eventNamePrefix, this._pipeEvent.bind(this), (0, _extends3.default)({
-                  mydevices: true
-                }, this._getUserFilter()));
-                keepAliveIntervalID = this._startKeepAlive();
-                _context3.next = 4;
-                return this._closeStream(subscriptionID, keepAliveIntervalID);
-
-              case 4:
-                return _context3.abrupt('return', this.ok());
-
-              case 5:
-              case 'end':
-                return _context3.stop();
-            }
-          }
-        }, _callee3, this);
-      }));
-
-      function getMyEvents(_x3) {
-        return _ref3.apply(this, arguments);
-      }
-
-      return getMyEvents;
-    }()
-  }, {
-    key: 'getDeviceEvents',
-    value: function () {
-      var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(deviceID, eventNamePrefix) {
-        var subscriptionID, keepAliveIntervalID;
-        return _regenerator2.default.wrap(function _callee4$(_context4) {
-          while (1) {
-            switch (_context4.prev = _context4.next) {
-              case 0:
-                subscriptionID = this._eventManager.subscribe(eventNamePrefix, this._pipeEvent.bind(this), (0, _extends3.default)({
-                  deviceID: deviceID
-                }, this._getUserFilter()));
-                keepAliveIntervalID = this._startKeepAlive();
-                _context4.next = 4;
-                return this._closeStream(subscriptionID, keepAliveIntervalID);
-
-              case 4:
-                return _context4.abrupt('return', this.ok());
-
-              case 5:
-              case 'end':
-                return _context4.stop();
-            }
-          }
-        }, _callee4, this);
-      }));
-
-      function getDeviceEvents(_x4, _x5) {
-        return _ref4.apply(this, arguments);
       }
 
       return getDeviceEvents;
@@ -261,11 +209,11 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
   }, {
     key: 'publish',
     value: function () {
-      var _ref5 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(postBody) {
+      var _ref3 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee3(postBody) {
         var eventData;
-        return _regenerator2.default.wrap(function _callee5$(_context5) {
+        return _regenerator2.default.wrap(function _callee3$(_context3) {
           while (1) {
-            switch (_context5.prev = _context5.next) {
+            switch (_context3.prev = _context3.next) {
               case 0:
                 eventData = (0, _extends3.default)({
                   data: postBody.data,
@@ -276,18 +224,18 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
 
 
                 this._eventManager.publish(eventData);
-                return _context5.abrupt('return', this.ok({ ok: true }));
+                return _context3.abrupt('return', this.ok({ ok: true }));
 
               case 3:
               case 'end':
-                return _context5.stop();
+                return _context3.stop();
             }
           }
-        }, _callee5, this);
+        }, _callee3, this);
       }));
 
-      function publish(_x6) {
-        return _ref5.apply(this, arguments);
+      function publish(_x4) {
+        return _ref3.apply(this, arguments);
       }
 
       return publish;
@@ -297,18 +245,15 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
     value: function _closeStream(subscriptionID, keepAliveIntervalID) {
       var _this2 = this;
 
-      return new _promise2.default(function (resolve) {
-        var closeStreamHandler = function closeStreamHandler() {
-          _this2._eventManager.unsubscribe(subscriptionID);
-          clearInterval(keepAliveIntervalID);
-          resolve();
-        };
+      var closeStreamHandler = function closeStreamHandler() {
+        _this2._eventManager.unsubscribe(subscriptionID);
+        clearInterval(keepAliveIntervalID);
+      };
 
-        _this2.request.on('close', closeStreamHandler);
-        _this2.request.on('end', closeStreamHandler);
-        _this2.response.on('finish', closeStreamHandler);
-        _this2.response.on('end', closeStreamHandler);
-      });
+      this.request.on('close', closeStreamHandler);
+      this.request.on('end', closeStreamHandler);
+      this.response.on('finish', closeStreamHandler);
+      this.response.on('end', closeStreamHandler);
     }
   }, {
     key: '_getUserFilter',
@@ -320,13 +265,12 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
     value: function _startKeepAlive() {
       var _this3 = this;
 
-      this.response.write('\n');
       this._updateLastEventDate();
 
       return setInterval(function () {
         if (new Date() - _this3._lastEventDate >= KEEP_ALIVE_INTERVAL) {
-          _this3.response.write('event: heartbeat\n');
-          _this3.response.write('data: \n\n');
+          _this3.response.write('event:heartbeat\n');
+          _this3.response.write('data:\n\n');
           _this3._updateLastEventDate();
         }
       }, KEEP_ALIVE_INTERVAL);
@@ -336,8 +280,7 @@ var EventsControllerV2 = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _r
     value: function _pipeEvent(event) {
       var eventMerged = (0, _extends3.default)({ name: event.name }, (0, _eventToApi2.default)(event));
       try {
-        this.response.write('event: ' + event.name + '\n');
-        this.response.write('data: ' + (0, _stringify2.default)(eventMerged) + '\n\n');
+        this.response.write('data:' + (0, _stringify2.default)(eventMerged) + '\n\n');
         this._updateLastEventDate();
       } catch (error) {
         logger.error({

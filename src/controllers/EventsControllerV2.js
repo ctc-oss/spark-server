@@ -12,7 +12,7 @@ import eventToApi from '../lib/eventToApi';
 import Logger from '../lib/logger';
 const logger = Logger.createModuleLogger(module);
 
-const KEEP_ALIVE_INTERVAL = 9000;
+const KEEP_ALIVE_INTERVAL = 2000;
 
 class EventsControllerV2 extends Controller {
   _eventManager: EventManager;
@@ -38,7 +38,7 @@ class EventsControllerV2 extends Controller {
   @httpVerb('get')
   @route('/v2/events/:eventNamePrefix?*')
   @serverSentEvents()
-  async getEvents(eventNamePrefix: ?string): Promise<*> {
+  getEvents(eventNamePrefix: ?string): void {
     const subscriptionID = this._eventManager.subscribe(
       eventNamePrefix,
       this._pipeEvent.bind(this),
@@ -46,14 +46,13 @@ class EventsControllerV2 extends Controller {
     );
     const keepAliveIntervalID = this._startKeepAlive();
 
-    await this._closeStream(subscriptionID, keepAliveIntervalID);
-    return this.ok();
+    this._closeStream(subscriptionID, keepAliveIntervalID);
   }
 
   @httpVerb('get')
   @route('/v2/devices/events/:eventNamePrefix?*')
   @serverSentEvents()
-  async getMyEvents(eventNamePrefix: ?string): Promise<*> {
+  getMyEvents(eventNamePrefix: ?string): void {
     const subscriptionID = this._eventManager.subscribe(
       eventNamePrefix,
       this._pipeEvent.bind(this),
@@ -64,8 +63,7 @@ class EventsControllerV2 extends Controller {
     );
     const keepAliveIntervalID = this._startKeepAlive();
 
-    await this._closeStream(subscriptionID, keepAliveIntervalID);
-    return this.ok();
+    this._closeStream(subscriptionID, keepAliveIntervalID);
   }
 
   @httpVerb('get')
@@ -85,8 +83,7 @@ class EventsControllerV2 extends Controller {
     );
     const keepAliveIntervalID = this._startKeepAlive();
 
-    await this._closeStream(subscriptionID, keepAliveIntervalID);
-    return this.ok();
+    this._closeStream(subscriptionID, keepAliveIntervalID);
   }
 
   @httpVerb('post')
@@ -109,22 +106,16 @@ class EventsControllerV2 extends Controller {
     return this.ok({ ok: true });
   }
 
-  _closeStream(
-    subscriptionID: string,
-    keepAliveIntervalID: number,
-  ): Promise<void> {
-    return new Promise((resolve: () => void) => {
-      const closeStreamHandler = () => {
-        this._eventManager.unsubscribe(subscriptionID);
-        clearInterval(keepAliveIntervalID);
-        resolve();
-      };
+  _closeStream(subscriptionID: string, keepAliveIntervalID: number): void {
+    const closeStreamHandler = () => {
+      this._eventManager.unsubscribe(subscriptionID);
+      clearInterval(keepAliveIntervalID);
+    };
 
-      this.request.on('close', closeStreamHandler);
-      this.request.on('end', closeStreamHandler);
-      this.response.on('finish', closeStreamHandler);
-      this.response.on('end', closeStreamHandler);
-    });
+    this.request.on('close', closeStreamHandler);
+    this.request.on('end', closeStreamHandler);
+    this.response.on('finish', closeStreamHandler);
+    this.response.on('end', closeStreamHandler);
   }
 
   _getUserFilter(): Object {
@@ -132,13 +123,12 @@ class EventsControllerV2 extends Controller {
   }
 
   _startKeepAlive(): number {
-    this.response.write('\n');
     this._updateLastEventDate();
 
     return setInterval(() => {
       if (new Date() - this._lastEventDate >= KEEP_ALIVE_INTERVAL) {
-        this.response.write('event: heartbeat\n');
-        this.response.write('data: \n\n');
+        this.response.write('event:heartbeat\n');
+        this.response.write('data:\n\n');
         this._updateLastEventDate();
       }
     }, KEEP_ALIVE_INTERVAL);
@@ -147,8 +137,7 @@ class EventsControllerV2 extends Controller {
   _pipeEvent(event: Event) {
     const eventMerged = { name: event.name, ...eventToApi(event) };
     try {
-      this.response.write(`event: ${event.name}\n`);
-      this.response.write(`data: ${JSON.stringify(eventMerged)}\n\n`);
+      this.response.write(`data:${JSON.stringify(eventMerged)}\n\n`);
       this._updateLastEventDate();
     } catch (error) {
       logger.error(
