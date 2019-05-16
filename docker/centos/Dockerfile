@@ -10,12 +10,15 @@ USER root
 
 COPY docker/centos/.s2i/bin/assemble /usr/libexec/s2i
 
-COPY dist/ src/ package.json yarn.lock /tmp/src/
+COPY . /tmp/src
 
-RUN chown -R 1001:0 /tmp/src /usr/libexec/s2i/assemble
+RUN chown -R 1001:0 /tmp/src
 
 USER 1001
 
 RUN /usr/libexec/s2i/assemble
+
+EXPOSE 5683
+EXPOSE 8080
 
 CMD /usr/libexec/s2i/run
