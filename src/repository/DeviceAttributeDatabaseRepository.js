@@ -49,6 +49,13 @@ class DeviceAttributeDatabaseRepository extends BaseRepository
       }),
     );
 
+  getByName = async (name: string): Promise<?DeviceAttributes> =>
+    this._parseVariables(
+      await this._database.findOne(this._collectionName, {
+        name,
+      }),
+    );
+
   getManyFromIDs = async (
     deviceIDs: Array<string>,
     ownerID?: string,

@@ -89,7 +89,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
   return desc;
 }
 
-var ProvisioningController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _route2.default)('/v1/provisioning/:coreID'), (_class = function (_Controller) {
+var ProvisioningController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _route2.default)('/v1/provisioning/:deviceID'), (_class = function (_Controller) {
   (0, _inherits3.default)(ProvisioningController, _Controller);
 
   function ProvisioningController(deviceManager) {
@@ -104,7 +104,7 @@ var ProvisioningController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0
   (0, _createClass3.default)(ProvisioningController, [{
     key: 'provision',
     value: function () {
-      var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(coreID, postBody) {
+      var _ref = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee(deviceID, postBody) {
         var device;
         return _regenerator2.default.wrap(function _callee$(_context) {
           while (1) {
@@ -119,7 +119,7 @@ var ProvisioningController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0
 
               case 2:
                 _context.next = 4;
-                return this._deviceManager.provision(coreID, this.user.id, postBody.publicKey, postBody.algorithm);
+                return this._deviceManager.provision(deviceID, this.user.id, postBody.publicKey, postBody.algorithm);
 
               case 4:
                 device = _context.sent;

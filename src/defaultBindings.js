@@ -76,9 +76,13 @@ export default (container: Container, newSettings: Settings) => {
   container.bindClass('DevicesController', DevicesController, [
     'DeviceManager',
   ]);
-  container.bindClass('EventsController', EventsController, ['EventManager']);
+  container.bindClass('EventsController', EventsController, [
+    'EventManager',
+    'DeviceManager',
+  ]);
   container.bindClass('EventsControllerV2', EventsControllerV2, [
     'EventManager',
+    'DeviceManager',
   ]);
   container.bindClass('PermissionManager', PermissionManager, [
     'IDeviceAttributeRepository',

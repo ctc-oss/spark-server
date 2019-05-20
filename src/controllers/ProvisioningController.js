@@ -18,9 +18,9 @@ class ProvisioningController extends Controller {
   }
 
   @httpVerb('post')
-  @route('/v1/provisioning/:coreID')
+  @route('/v1/provisioning/:deviceID')
   async provision(
-    coreID: string,
+    deviceID: string,
     postBody: {
       algorithm: 'ecc' | 'rsa',
       filename: 'cli',
@@ -33,7 +33,7 @@ class ProvisioningController extends Controller {
     }
 
     const device = await this._deviceManager.provision(
-      coreID,
+      deviceID,
       this.user.id,
       postBody.publicKey,
       postBody.algorithm,

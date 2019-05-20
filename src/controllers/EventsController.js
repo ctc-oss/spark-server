@@ -2,6 +2,7 @@
 
 import type { Event, EventData } from '../types';
 import type EventManager from '../managers/EventManager';
+import type DeviceManager from '../managers/DeviceManager';
 
 import Controller from './Controller';
 import anonymous from '../decorators/anonymous';
@@ -16,13 +17,15 @@ const KEEP_ALIVE_INTERVAL = 9000;
 
 class EventsController extends Controller {
   _eventManager: EventManager;
+  _deviceManager: DeviceManager;
   _keepAliveIntervalID: ?string = null;
   _lastEventDate: Date = new Date();
 
-  constructor(eventManager: EventManager) {
+  constructor(eventManager: EventManager, deviceManager: DeviceManager) {
     super();
 
     this._eventManager = eventManager;
+    this._deviceManager = deviceManager;
   }
 
   @httpVerb('post')
@@ -69,12 +72,13 @@ class EventsController extends Controller {
   }
 
   @httpVerb('get')
-  @route('/v1/devices/:deviceID/events/:eventNamePrefix?*')
+  @route('/v1/devices/:deviceIDorName/events/:eventNamePrefix?*')
   @serverSentEvents()
   async getDeviceEvents(
-    deviceID: string,
+    deviceIDorName: string,
     eventNamePrefix: ?string,
   ): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     const subscriptionID = this._eventManager.subscribe(
       eventNamePrefix,
       this._pipeEvent.bind(this),

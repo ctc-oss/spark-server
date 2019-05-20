@@ -23,7 +23,7 @@ let disconnectedDeviceToApiAttributes;
 const getConnectedAttributes = () => connectedDeviceToApiAttributes;
 
 const TEST_LAST_HEARD = new Date();
-const TEST_DEVICE_FUNTIONS = ['testFunction'];
+const TEST_DEVICE_FUNCTIONS = ['testFunction'];
 const TEST_FUNCTION_ARGUMENT = 'testArgument';
 const TEST_DEVICE_VARIABLES = ['testVariable1', 'testVariable2'];
 const TEST_VARIABLE_RESULT = 'resultValue';
@@ -59,8 +59,8 @@ test.before(async () => {
       }
 
       if (name === SPARK_SERVER_EVENTS.CALL_DEVICE_FUNCTION) {
-        if (TEST_DEVICE_FUNTIONS.includes(functionName)) {
-          return functionArguments.argument;
+        if (TEST_DEVICE_FUNCTIONS.includes(functionName)) {
+          return { result: functionArguments.argument };
         } else {
           return { error: new Error(`Unknown Function ${functionName}`) };
         }
@@ -69,7 +69,7 @@ test.before(async () => {
       if (name === SPARK_SERVER_EVENTS.GET_DEVICE_ATTRIBUTES) {
         return {
           deviceID: CONNECTED_DEVICE_ID,
-          functions: TEST_DEVICE_FUNTIONS,
+          functions: TEST_DEVICE_FUNCTIONS,
           lastHeard: TEST_LAST_HEARD,
           ownerID: testUser.id,
           variables: TEST_DEVICE_VARIABLES,
@@ -160,7 +160,7 @@ test.serial('should return device details for connected device', async t => {
   t.is(response.body.connected, true);
   t.is(
     JSON.stringify(response.body.functions),
-    JSON.stringify(TEST_DEVICE_FUNTIONS),
+    JSON.stringify(TEST_DEVICE_FUNCTIONS),
   );
   t.is(response.body.id, connectedDeviceToApiAttributes.id);
   t.is(response.body.name, connectedDeviceToApiAttributes.name);
@@ -282,7 +282,7 @@ test.serial(
   'should return function call result and device attributes',
   async t => {
     const callFunctionResponse = await request(app)
-      .post(`/v1/devices/${CONNECTED_DEVICE_ID}/${TEST_DEVICE_FUNTIONS[0]}`)
+      .post(`/v1/devices/${CONNECTED_DEVICE_ID}/${TEST_DEVICE_FUNCTIONS[0]}`)
       .set('Content-Type', 'application/x-www-form-urlencoded')
       .send({
         access_token: userToken,
@@ -298,7 +298,7 @@ test.serial(
 
 test.serial("should throw an error if function doesn't exist", async t => {
   const callFunctionResponse = await request(app)
-    .post(`/v1/devices/${CONNECTED_DEVICE_ID}/wrong${TEST_DEVICE_FUNTIONS[0]}`)
+    .post(`/v1/devices/${CONNECTED_DEVICE_ID}/wrong${TEST_DEVICE_FUNCTIONS[0]}`)
     .set('Content-Type', 'application/x-www-form-urlencoded')
     .send({
       access_token: userToken,
@@ -455,19 +455,21 @@ test.serial(
   },
 );
 
-test.after.always(async (): Promise<void> => {
-  await TestData.deleteCustomFirmwareBinary(customFirmwareFilePath);
-  await container.constitute('IUserRepository').deleteByID(testUser.id);
-  await container
-    .constitute('IDeviceAttributeRepository')
-    .deleteByID(CONNECTED_DEVICE_ID);
-  await container
-    .constitute('IDeviceKeyRepository')
-    .deleteByID(CONNECTED_DEVICE_ID);
-  await container
-    .constitute('IDeviceAttributeRepository')
-    .deleteByID(DISCONNECTED_DEVICE_ID);
-  await container
-    .constitute('IDeviceKeyRepository')
-    .deleteByID(DISCONNECTED_DEVICE_ID);
-});
+test.after.always(
+  async (): Promise<void> => {
+    await TestData.deleteCustomFirmwareBinary(customFirmwareFilePath);
+    await container.constitute('IUserRepository').deleteByID(testUser.id);
+    await container
+      .constitute('IDeviceAttributeRepository')
+      .deleteByID(CONNECTED_DEVICE_ID);
+    await container
+      .constitute('IDeviceKeyRepository')
+      .deleteByID(CONNECTED_DEVICE_ID);
+    await container
+      .constitute('IDeviceAttributeRepository')
+      .deleteByID(DISCONNECTED_DEVICE_ID);
+    await container
+      .constitute('IDeviceKeyRepository')
+      .deleteByID(DISCONNECTED_DEVICE_ID);
+  },
+);

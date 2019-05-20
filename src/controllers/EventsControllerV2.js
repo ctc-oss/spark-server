@@ -16,13 +16,15 @@ const KEEP_ALIVE_INTERVAL = 9000;
 
 class EventsControllerV2 extends Controller {
   _eventManager: EventManager;
+  _deviceManager: DeviceManager;
   _keepAliveIntervalID: ?string = null;
   _lastEventDate: Date = new Date();
 
-  constructor(eventManager: EventManager) {
+  constructor(eventManager: EventManager, deviceManager: DeviceManager) {
     super();
 
     this._eventManager = eventManager;
+    this._deviceManager = deviceManager;
   }
 
   @httpVerb('post')
@@ -67,12 +69,13 @@ class EventsControllerV2 extends Controller {
   }
 
   @httpVerb('get')
-  @route('/v2/devices/:deviceID/events/:eventNamePrefix?*')
+  @route('/v2/devices/:deviceIDorName/events/:eventNamePrefix?*')
   @serverSentEvents()
   async getDeviceEvents(
-    deviceID: string,
+    deviceIDorName: string,
     eventNamePrefix: ?string,
   ): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     const subscriptionID = this._eventManager.subscribe(
       eventNamePrefix,
       this._pipeEvent.bind(this),

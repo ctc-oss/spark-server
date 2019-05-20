@@ -111,7 +111,7 @@ function _applyDecoratedDescriptor(target, property, decorators, descriptor, con
 
 var logger = _logger2.default.createModuleLogger(module);
 
-var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _route2.default)('/v1/devices'), _dec3 = (0, _httpVerb2.default)('get'), _dec4 = (0, _route2.default)('/v1/binaries/:binaryID'), _dec5 = (0, _httpVerb2.default)('post'), _dec6 = (0, _route2.default)('/v1/binaries'), _dec7 = (0, _allowUpload2.default)(), _dec8 = (0, _httpVerb2.default)('delete'), _dec9 = (0, _route2.default)('/v1/devices/:deviceID'), _dec10 = (0, _httpVerb2.default)('get'), _dec11 = (0, _route2.default)('/v1/devices'), _dec12 = (0, _httpVerb2.default)('get'), _dec13 = (0, _route2.default)('/v1/devices/:deviceID'), _dec14 = (0, _httpVerb2.default)('get'), _dec15 = (0, _route2.default)('/v1/devices/:deviceID/:varName/'), _dec16 = (0, _httpVerb2.default)('put'), _dec17 = (0, _route2.default)('/v1/devices/:deviceID'), _dec18 = (0, _allowUpload2.default)('file', 1), _dec19 = (0, _httpVerb2.default)('post'), _dec20 = (0, _route2.default)('/v1/devices/:deviceID/:functionName'), _dec21 = (0, _httpVerb2.default)('put'), _dec22 = (0, _route2.default)('/v1/devices/:deviceID/ping'), (_class = function (_Controller) {
+var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _route2.default)('/v1/devices'), _dec3 = (0, _httpVerb2.default)('get'), _dec4 = (0, _route2.default)('/v1/binaries/:binaryID'), _dec5 = (0, _httpVerb2.default)('post'), _dec6 = (0, _route2.default)('/v1/binaries'), _dec7 = (0, _allowUpload2.default)(), _dec8 = (0, _httpVerb2.default)('delete'), _dec9 = (0, _route2.default)('/v1/devices/:deviceIDorName'), _dec10 = (0, _httpVerb2.default)('get'), _dec11 = (0, _route2.default)('/v1/devices'), _dec12 = (0, _httpVerb2.default)('get'), _dec13 = (0, _route2.default)('/v1/devices/:deviceIDorName'), _dec14 = (0, _httpVerb2.default)('get'), _dec15 = (0, _route2.default)('/v1/devices/:deviceIDorName/:varName/'), _dec16 = (0, _httpVerb2.default)('put'), _dec17 = (0, _route2.default)('/v1/devices/:deviceIDorName'), _dec18 = (0, _allowUpload2.default)('file', 1), _dec19 = (0, _httpVerb2.default)('post'), _dec20 = (0, _route2.default)('/v1/devices/:deviceIDorName/:functionName'), _dec21 = (0, _httpVerb2.default)('put'), _dec22 = (0, _route2.default)('/v1/devices/:deviceIDorName/ping'), (_class = function (_Controller) {
   (0, _inherits3.default)(DevicesController, _Controller);
 
   function DevicesController(deviceManager) {
@@ -133,18 +133,32 @@ var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _ro
             switch (_context.prev = _context.next) {
               case 0:
                 deviceID = postBody.id;
-                _context.next = 3;
-                return this._deviceManager.claimDevice(deviceID, this.user.id);
-
-              case 3:
-                return _context.abrupt('return', this.ok({ ok: true }));
+                _context.prev = 1;
+                _context.next = 4;
+                return this._deviceManager.getDeviceID(deviceID);
 
               case 4:
+                deviceID = _context.sent;
+                _context.next = 9;
+                break;
+
+              case 7:
+                _context.prev = 7;
+                _context.t0 = _context['catch'](1);
+
+              case 9:
+                _context.next = 11;
+                return this._deviceManager.claimDevice(deviceID, this.user.id);
+
+              case 11:
+                return _context.abrupt('return', this.ok({ ok: true }));
+
+              case 12:
               case 'end':
                 return _context.stop();
             }
           }
-        }, _callee, this);
+        }, _callee, this, [[1, 7]]);
       }));
 
       function claimDevice(_x) {
@@ -222,18 +236,24 @@ var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _ro
   }, {
     key: 'unclaimDevice',
     value: function () {
-      var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(deviceID) {
+      var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(deviceIDorName) {
+        var deviceID;
         return _regenerator2.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
                 _context4.next = 2;
-                return this._deviceManager.unclaimDevice(deviceID);
+                return this._deviceManager.getDeviceID(deviceIDorName);
 
               case 2:
+                deviceID = _context4.sent;
+                _context4.next = 5;
+                return this._deviceManager.unclaimDevice(deviceID);
+
+              case 5:
                 return _context4.abrupt('return', this.ok({ ok: true }));
 
-              case 3:
+              case 6:
               case 'end':
                 return _context4.stop();
             }
@@ -292,20 +312,25 @@ var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _ro
   }, {
     key: 'getDevice',
     value: function () {
-      var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6(deviceID) {
-        var device;
+      var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee6(deviceIDorName) {
+        var deviceID, device;
         return _regenerator2.default.wrap(function _callee6$(_context6) {
           while (1) {
             switch (_context6.prev = _context6.next) {
               case 0:
                 _context6.next = 2;
-                return this._deviceManager.getByID(deviceID);
+                return this._deviceManager.getDeviceID(deviceIDorName);
 
               case 2:
+                deviceID = _context6.sent;
+                _context6.next = 5;
+                return this._deviceManager.getByID(deviceID);
+
+              case 5:
                 device = _context6.sent;
                 return _context6.abrupt('return', this.ok((0, _deviceToAPI2.default)(device)));
 
-              case 4:
+              case 7:
               case 'end':
                 return _context6.stop();
             }
@@ -322,41 +347,46 @@ var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _ro
   }, {
     key: 'getVariableValue',
     value: function () {
-      var _ref7 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7(deviceID, varName) {
-        var varValue, errorMessage;
+      var _ref7 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7(deviceIDorName, varName) {
+        var deviceID, varValue, errorMessage;
         return _regenerator2.default.wrap(function _callee7$(_context7) {
           while (1) {
             switch (_context7.prev = _context7.next) {
               case 0:
                 _context7.prev = 0;
                 _context7.next = 3;
-                return this._deviceManager.getVariableValue(deviceID, varName);
+                return this._deviceManager.getDeviceID(deviceIDorName);
 
               case 3:
+                deviceID = _context7.sent;
+                _context7.next = 6;
+                return this._deviceManager.getVariableValue(deviceID, varName);
+
+              case 6:
                 varValue = _context7.sent;
                 return _context7.abrupt('return', this.ok({ result: varValue }));
 
-              case 7:
-                _context7.prev = 7;
+              case 10:
+                _context7.prev = 10;
                 _context7.t0 = _context7['catch'](0);
                 errorMessage = _context7.t0.message;
 
                 if (!errorMessage.match('Variable not found')) {
-                  _context7.next = 12;
+                  _context7.next = 15;
                   break;
                 }
 
                 throw new _HttpError2.default('Variable not found', 404);
 
-              case 12:
+              case 15:
                 throw _context7.t0;
 
-              case 13:
+              case 16:
               case 'end':
                 return _context7.stop();
             }
           }
-        }, _callee7, this, [[0, 7]]);
+        }, _callee7, this, [[0, 10]]);
       }));
 
       function getVariableValue(_x6, _x7) {
@@ -368,87 +398,93 @@ var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _ro
   }, {
     key: 'updateDevice',
     value: function () {
-      var _ref8 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee8(deviceID, postBody) {
-        var updatedAttributes, flashResult, file, _flashResult;
+      var _ref8 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee8(deviceIDorName, postBody) {
+        var deviceID, updatedAttributes, flashResult, file, _flashResult;
 
         return _regenerator2.default.wrap(function _callee8$(_context8) {
           while (1) {
             switch (_context8.prev = _context8.next) {
               case 0:
+                _context8.next = 2;
+                return this._deviceManager.getDeviceID(deviceIDorName);
+
+              case 2:
+                deviceID = _context8.sent;
+
                 if (!postBody.name) {
-                  _context8.next = 5;
+                  _context8.next = 8;
                   break;
                 }
 
-                _context8.next = 3;
+                _context8.next = 6;
                 return this._deviceManager.renameDevice(deviceID, postBody.name);
 
-              case 3:
+              case 6:
                 updatedAttributes = _context8.sent;
                 return _context8.abrupt('return', this.ok({ name: updatedAttributes.name, ok: true }));
 
-              case 5:
+              case 8:
                 if (!postBody.signal) {
-                  _context8.next = 11;
+                  _context8.next = 14;
                   break;
                 }
 
                 if (['1', '0'].includes(postBody.signal)) {
-                  _context8.next = 8;
+                  _context8.next = 11;
                   break;
                 }
 
                 throw new _HttpError2.default('Wrong signal value');
 
-              case 8:
-                _context8.next = 10;
+              case 11:
+                _context8.next = 13;
                 return this._deviceManager.raiseYourHand(deviceID, !!parseInt(postBody.signal, 10));
 
-              case 10:
+              case 13:
                 return _context8.abrupt('return', this.ok({ id: deviceID, ok: true }));
 
-              case 11:
+              case 14:
                 if (!postBody.app_id) {
-                  _context8.next = 16;
+                  _context8.next = 19;
                   break;
                 }
 
-                _context8.next = 14;
+                _context8.next = 17;
                 return this._deviceManager.flashKnownApp(deviceID, postBody.app_id);
 
-              case 14:
+              case 17:
                 flashResult = _context8.sent;
                 return _context8.abrupt('return', this.ok({ id: deviceID, status: flashResult.status }));
 
-              case 16:
+              case 19:
 
                 // 4 flash device with custom application
                 file = postBody.file;
 
                 if (file) {
-                  _context8.next = 19;
+                  _context8.next = 22;
                   break;
                 }
 
                 throw new Error('Firmware file not provided');
 
-              case 19:
+              case 22:
                 if (!(file.originalname === 'binary' || file.originalname.endsWith('.bin'))) {
-                  _context8.next = 24;
+                  _context8.next = 27;
                   break;
                 }
 
-                _context8.next = 22;
+                _context8.next = 25;
                 return this._deviceManager.flashBinary(deviceID, file);
 
-              case 22:
+              case 25:
                 _flashResult = _context8.sent;
                 return _context8.abrupt('return', this.ok({ id: deviceID, status: _flashResult.status }));
 
-              case 24:
+              case 27:
                 throw new _HttpError2.default('Did not update device');
 
-              case 25:
+              case 28:
               case 'end':
                 return _context8.stop();
             }
@@ -465,46 +501,51 @@ var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _ro
   }, {
     key: 'callDeviceFunction',
     value: function () {
-      var _ref9 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee9(deviceID, functionName, postBody) {
-        var result, device, errorMessage;
+      var _ref9 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee9(deviceIDorName, functionName, postBody) {
+        var deviceID, result, device, errorMessage;
         return _regenerator2.default.wrap(function _callee9$(_context9) {
           while (1) {
             switch (_context9.prev = _context9.next) {
               case 0:
                 _context9.prev = 0;
                 _context9.next = 3;
-                return this._deviceManager.callFunction(deviceID, functionName, postBody);
+                return this._deviceManager.getDeviceID(deviceIDorName);
 
               case 3:
-                result = _context9.sent;
+                deviceID = _context9.sent;
                 _context9.next = 6;
-                return this._deviceManager.getByID(deviceID);
+                return this._deviceManager.callFunction(deviceID, functionName, postBody);
 
               case 6:
+                result = _context9.sent;
+                _context9.next = 9;
+                return this._deviceManager.getByID(deviceID);
+
+              case 9:
                 device = _context9.sent;
                 return _context9.abrupt('return', this.ok((0, _deviceToAPI2.default)(device, result)));
 
-              case 10:
-                _context9.prev = 10;
+              case 13:
+                _context9.prev = 13;
                 _context9.t0 = _context9['catch'](0);
                 errorMessage = _context9.t0.message;
 
                 if (!(errorMessage.indexOf('Unknown Function') >= 0)) {
-                  _context9.next = 15;
+                  _context9.next = 18;
                   break;
                 }
 
                 throw new _HttpError2.default('Function not found', 404);
 
-              case 15:
+              case 18:
                 throw _context9.t0;
 
-              case 16:
+              case 19:
               case 'end':
                 return _context9.stop();
             }
           }
-        }, _callee9, this, [[0, 10]]);
+        }, _callee9, this, [[0, 13]]);
       }));
 
       function callDeviceFunction(_x10, _x11, _x12) {
@@ -516,20 +557,26 @@ var DevicesController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _ro
   }, {
     key: 'pingDevice',
     value: function () {
-      var _ref10 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10(deviceID) {
+      var _ref10 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee10(deviceIDorName) {
+        var deviceID;
         return _regenerator2.default.wrap(function _callee10$(_context10) {
           while (1) {
             switch (_context10.prev = _context10.next) {
               case 0:
+                _context10.next = 2;
+                return this._deviceManager.getDeviceID(deviceIDorName);
+
+              case 2:
+                deviceID = _context10.sent;
                 _context10.t0 = this;
-                _context10.next = 3;
+                _context10.next = 6;
                 return this._deviceManager.ping(deviceID);
 
-              case 3:
+              case 6:
                 _context10.t1 = _context10.sent;
                 return _context10.abrupt('return', _context10.t0.ok.call(_context10.t0, _context10.t1));
 
-              case 5:
+              case 8:
               case 'end':
                 return _context10.stop();
             }

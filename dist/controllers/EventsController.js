@@ -117,10 +117,10 @@ var logger = _logger2.default.createModuleLogger(module);
 
 var KEEP_ALIVE_INTERVAL = 9000;
 
-var EventsController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _route2.default)('/v1/ping'), _dec3 = (0, _anonymous2.default)(), _dec4 = (0, _httpVerb2.default)('get'), _dec5 = (0, _route2.default)('/v1/events/:eventNamePrefix?*'), _dec6 = (0, _serverSentEvents2.default)(), _dec7 = (0, _httpVerb2.default)('get'), _dec8 = (0, _route2.default)('/v1/devices/events/:eventNamePrefix?*'), _dec9 = (0, _serverSentEvents2.default)(), _dec10 = (0, _httpVerb2.default)('get'), _dec11 = (0, _route2.default)('/v1/devices/:deviceID/events/:eventNamePrefix?*'), _dec12 = (0, _serverSentEvents2.default)(), _dec13 = (0, _httpVerb2.default)('post'), _dec14 = (0, _route2.default)('/v1/devices/events'), (_class = function (_Controller) {
+var EventsController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _route2.default)('/v1/ping'), _dec3 = (0, _anonymous2.default)(), _dec4 = (0, _httpVerb2.default)('get'), _dec5 = (0, _route2.default)('/v1/events/:eventNamePrefix?*'), _dec6 = (0, _serverSentEvents2.default)(), _dec7 = (0, _httpVerb2.default)('get'), _dec8 = (0, _route2.default)('/v1/devices/events/:eventNamePrefix?*'), _dec9 = (0, _serverSentEvents2.default)(), _dec10 = (0, _httpVerb2.default)('get'), _dec11 = (0, _route2.default)('/v1/devices/:deviceIDorName/events/:eventNamePrefix?*'), _dec12 = (0, _serverSentEvents2.default)(), _dec13 = (0, _httpVerb2.default)('post'), _dec14 = (0, _route2.default)('/v1/devices/events'), (_class = function (_Controller) {
   (0, _inherits3.default)(EventsController, _Controller);
 
-  function EventsController(eventManager) {
+  function EventsController(eventManager, deviceManager) {
     (0, _classCallCheck3.default)(this, EventsController);
 
     var _this = (0, _possibleConstructorReturn3.default)(this, (EventsController.__proto__ || (0, _getPrototypeOf2.default)(EventsController)).call(this));
@@ -130,6 +130,7 @@ var EventsController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _rou
 
 
     _this._eventManager = eventManager;
+    _this._deviceManager = deviceManager;
     return _this;
   }
 
@@ -228,23 +229,28 @@ var EventsController = (_dec = (0, _httpVerb2.default)('post'), _dec2 = (0, _rou
   }, {
     key: 'getDeviceEvents',
     value: function () {
-      var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(deviceID, eventNamePrefix) {
-        var subscriptionID, keepAliveIntervalID;
+      var _ref4 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee4(deviceIDorName, eventNamePrefix) {
+        var deviceID, subscriptionID, keepAliveIntervalID;
         return _regenerator2.default.wrap(function _callee4$(_context4) {
           while (1) {
             switch (_context4.prev = _context4.next) {
               case 0:
+                _context4.next = 2;
+                return this._deviceManager.getDeviceID(deviceIDorName);
+
+              case 2:
+                deviceID = _context4.sent;
                 subscriptionID = this._eventManager.subscribe(eventNamePrefix, this._pipeEvent.bind(this), (0, _extends3.default)({
                   deviceID: deviceID
                 }, this._getUserFilter()));
                 keepAliveIntervalID = this._startKeepAlive();
-                _context4.next = 4;
+                _context4.next = 7;
                 return this._closeStream(subscriptionID, keepAliveIntervalID);
 
-              case 4:
+              case 7:
                 return _context4.abrupt('return', this.ok());
 
-              case 5:
+              case 8:
               case 'end':
                 return _context4.stop();
             }

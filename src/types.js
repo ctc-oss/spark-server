@@ -298,6 +298,7 @@ export interface IOrganizationRepository extends IBaseRepository<Organization> {
 
 export interface IDeviceAttributeRepository
   extends IBaseRepository<DeviceAttributes> {
+  getByName(deviceName: string): Promise<DeviceAttributes>;
   getManyFromIDs(
     deviceIDs: Array<string>,
     ownerID?: string,

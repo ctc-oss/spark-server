@@ -166,8 +166,8 @@ exports.default = function (container, newSettings) {
   // controllers
   container.bindClass('DeviceClaimsController', _DeviceClaimsController2.default, ['DeviceManager', 'ClaimCodeManager']);
   container.bindClass('DevicesController', _DevicesController2.default, ['DeviceManager']);
-  container.bindClass('EventsController', _EventsController2.default, ['EventManager']);
-  container.bindClass('EventsControllerV2', _EventsControllerV2.default, ['EventManager']);
+  container.bindClass('EventsController', _EventsController2.default, ['EventManager', 'DeviceManager']);
+  container.bindClass('EventsControllerV2', _EventsControllerV2.default, ['EventManager', 'DeviceManager']);
   container.bindClass('PermissionManager', _PermissionManager2.default, ['IDeviceAttributeRepository', 'IOrganizationRepository', 'IUserRepository', 'IWebhookRepository', 'OAuthServer']);
   container.bindClass('OauthClientsController', _OauthClientsController2.default, []);
   container.bindClass('ProductsController', _ProductsController2.default, ['DeviceManager', 'IDeviceAttributeRepository', 'IOrganizationRepository', 'IProductRepository', 'IProductConfigRepository', 'IProductDeviceRepository', 'IProductFirmwareRepository']);

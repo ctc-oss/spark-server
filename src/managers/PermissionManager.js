@@ -43,7 +43,7 @@ class PermissionManager {
   checkPermissionsForEntityByID = async (
     entityName: ProtectedEntityName,
     id: string,
-  ): Promise<boolean> => !!await this.getEntityByID(entityName, id);
+  ): Promise<boolean> => !!(await this.getEntityByID(entityName, id));
 
   getAllEntitiesForCurrentUser = async (
     entityName: ProtectedEntityName,

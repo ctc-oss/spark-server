@@ -231,8 +231,12 @@ class ProductsController extends Controller {
   }
 
   @httpVerb('get')
-  @route('/v1/products/:productIDOrSlug/devices/:deviceID')
-  async getSingleDevice(productIDOrSlug: string, deviceID: string): Promise<*> {
+  @route('/v1/products/:productIDOrSlug/devices/:deviceIDorName')
+  async getSingleDevice(
+    productIDOrSlug: string,
+    deviceIDorName: string,
+  ): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     const product = await this._productRepository.getByIDOrSlug(
       productIDOrSlug,
     );
@@ -397,10 +401,10 @@ class ProductsController extends Controller {
   }
 
   @httpVerb('put')
-  @route('/v1/products/:productIDOrSlug/devices/:deviceID')
+  @route('/v1/products/:productIDOrSlug/devices/:deviceIDorName')
   async updateProductDevice(
     productIDOrSlug: string,
-    deviceID: string,
+    deviceIDorName: string,
     {
       denied,
       desired_firmware_version,
@@ -415,6 +419,7 @@ class ProductsController extends Controller {
       quarantined?: boolean,
     },
   ): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     const product = await this._productRepository.getByIDOrSlug(
       productIDOrSlug,
     );
@@ -491,11 +496,12 @@ class ProductsController extends Controller {
   }
 
   @httpVerb('delete')
-  @route('/v1/products/:productIDOrSlug/devices/:deviceID')
+  @route('/v1/products/:productIDOrSlug/devices/:deviceIDorName')
   async removeDeviceFromProduct(
     productIDOrSlug: string,
-    deviceID: string,
+    deviceIDorName: string,
   ): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     const product = await this._productRepository.getByIDOrSlug(
       productIDOrSlug,
     );

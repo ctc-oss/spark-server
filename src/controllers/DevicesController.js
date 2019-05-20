@@ -33,7 +33,13 @@ class DevicesController extends Controller {
   @httpVerb('post')
   @route('/v1/devices')
   async claimDevice(postBody: { id: string }): Promise<*> {
-    const deviceID = postBody.id;
+    let deviceID = postBody.id;
+    try {
+      deviceID = await this._deviceManager.getDeviceID(deviceID);
+    } catch (_) {
+      // We want to ignore the error and let the `claimDevice` call throw the exception
+    }
+
     await this._deviceManager.claimDevice(deviceID, this.user.id);
 
     return this.ok({ ok: true });
@@ -66,8 +72,9 @@ class DevicesController extends Controller {
   }
 
   @httpVerb('delete')
-  @route('/v1/devices/:deviceID')
-  async unclaimDevice(deviceID: string): Promise<*> {
+  @route('/v1/devices/:deviceIDorName')
+  async unclaimDevice(deviceIDorName: string): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     await this._deviceManager.unclaimDevice(deviceID);
     return this.ok({ ok: true });
   }
@@ -92,16 +99,18 @@ class DevicesController extends Controller {
   }
 
   @httpVerb('get')
-  @route('/v1/devices/:deviceID')
-  async getDevice(deviceID: string): Promise<*> {
+  @route('/v1/devices/:deviceIDorName')
+  async getDevice(deviceIDorName: string): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     const device = await this._deviceManager.getByID(deviceID);
     return this.ok(deviceToAPI(device));
   }
 
   @httpVerb('get')
-  @route('/v1/devices/:deviceID/:varName/')
-  async getVariableValue(deviceID: string, varName: string): Promise<*> {
+  @route('/v1/devices/:deviceIDorName/:varName/')
+  async getVariableValue(deviceIDorName: string, varName: string): Promise<*> {
     try {
+      const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
       const varValue = await this._deviceManager.getVariableValue(
         deviceID,
         varName,
@@ -118,10 +127,10 @@ class DevicesController extends Controller {
   }
 
   @httpVerb('put')
-  @route('/v1/devices/:deviceID')
+  @route('/v1/devices/:deviceIDorName')
   @allowUpload('file', 1)
   async updateDevice(
-    deviceID: string,
+    deviceIDorName: string,
     postBody: {
       app_id?: string,
       file?: File,
@@ -130,6 +139,7 @@ class DevicesController extends Controller {
       signal?: '1' | '0',
     },
   ): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     // 1 rename device
     if (postBody.name) {
       const updatedAttributes = await this._deviceManager.renameDevice(
@@ -181,13 +191,14 @@ class DevicesController extends Controller {
   }
 
   @httpVerb('post')
-  @route('/v1/devices/:deviceID/:functionName')
+  @route('/v1/devices/:deviceIDorName/:functionName')
   async callDeviceFunction(
-    deviceID: string,
+    deviceIDorName: string,
     functionName: string,
     postBody: Object,
   ): Promise<*> {
     try {
+      const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
       const result = await this._deviceManager.callFunction(
         deviceID,
         functionName,
@@ -206,8 +217,9 @@ class DevicesController extends Controller {
   }
 
   @httpVerb('put')
-  @route('/v1/devices/:deviceID/ping')
-  async pingDevice(deviceID: string): Promise<*> {
+  @route('/v1/devices/:deviceIDorName/ping')
+  async pingDevice(deviceIDorName: string): Promise<*> {
+    const deviceID = await this._deviceManager.getDeviceID(deviceIDorName);
     return this.ok(await this._deviceManager.ping(deviceID));
   }
 }
