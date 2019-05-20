@@ -307,7 +307,7 @@ var DeviceManager = function DeviceManager(deviceAttributeRepository, deviceFirm
 
   this.callFunction = function () {
     var _ref8 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee7(deviceID, functionName, functionArguments) {
-      var callFunctionResponse, error;
+      var callFunctionResponse, error, result;
       return _regenerator2.default.wrap(function _callee7$(_context7) {
         while (1) {
           switch (_context7.prev = _context7.next) {
@@ -324,7 +324,7 @@ var DeviceManager = function DeviceManager(deviceAttributeRepository, deviceFirm
 
             case 4:
               callFunctionResponse = _context7.sent;
-              error = callFunctionResponse.error;
+              error = callFunctionResponse.error, result = callFunctionResponse.result;
 
               if (!error) {
                 _context7.next = 8;
@@ -334,7 +334,7 @@ var DeviceManager = function DeviceManager(deviceAttributeRepository, deviceFirm
               throw new _HttpError2.default(error);
 
             case 8:
-              return _context7.abrupt('return', callFunctionResponse);
+              return _context7.abrupt('return', result);
 
             case 9:
             case 'end':

@@ -160,12 +160,12 @@ class DeviceManager {
       },
     );
 
-    const { error } = callFunctionResponse;
+    const { error, result } = callFunctionResponse;
     if (error) {
       throw new HttpError(error);
     }
 
-    return callFunctionResponse;
+    return result;
   };
 
   getVariableValue = async (
