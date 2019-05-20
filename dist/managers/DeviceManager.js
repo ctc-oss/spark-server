@@ -253,13 +253,13 @@ var DeviceManager = function DeviceManager(deviceAttributeRepository, deviceFirm
 
   this.getDeviceID = function () {
     var _ref6 = (0, _asyncToGenerator3.default)( /*#__PURE__*/_regenerator2.default.mark(function _callee5(deviceIDorName) {
-      var device, exception, hasPermission;
+      var device, hasPermission;
       return _regenerator2.default.wrap(function _callee5$(_context5) {
         while (1) {
           switch (_context5.prev = _context5.next) {
             case 0:
               _context5.next = 2;
-              return _this.getByID(deviceIDorName);
+              return _this._deviceAttributeRepository.getByID(deviceIDorName);
 
             case 2:
               device = _context5.sent;
@@ -276,29 +276,27 @@ var DeviceManager = function DeviceManager(deviceAttributeRepository, deviceFirm
               device = _context5.sent;
 
             case 7:
-              exception = "User doesn't have access";
-
               if (!(device == null)) {
-                _context5.next = 10;
+                _context5.next = 9;
                 break;
               }
 
-              throw new _HttpError2.default(exception, 403);
+              throw new _HttpError2.default('No device found', 404);
 
-            case 10:
+            case 9:
               hasPermission = _this._permissionManager.doesUserHaveAccess(device);
 
               if (hasPermission) {
-                _context5.next = 13;
+                _context5.next = 12;
                 break;
               }
 
-              throw new _HttpError2.default(exception, 403);
+              throw new _HttpError2.default("User doesn't have access", 403);
 
-            case 13:
+            case 12:
               return _context5.abrupt('return', device.deviceID);
 
-            case 14:
+            case 13:
             case 'end':
               return _context5.stop();
           }

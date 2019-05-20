@@ -120,21 +120,19 @@ class DeviceManager {
   };
 
   getDeviceID = async (deviceIDorName: string): Promise<string> => {
-    let device = await this.getByID(deviceIDorName);
+    let device = await this._deviceAttributeRepository.getByID(deviceIDorName);
     if (device == null) {
       device = await this._deviceAttributeRepository.getByName(deviceIDorName);
     }
 
-    const exception = "User doesn't have access";
-
     if (device == null) {
-      throw new HttpError(exception, 403);
+      throw new HttpError('No device found', 404);
     }
 
     const hasPermission = this._permissionManager.doesUserHaveAccess(device);
 
     if (!hasPermission) {
-      throw new HttpError(exception, 403);
+      throw new HttpError("User doesn't have access", 403);
     }
 
     return device.deviceID;
