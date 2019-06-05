@@ -1,4 +1,4 @@
-FROM balenalib/raspberrypi3-node:8
+FROM balenalib/raspberrypi3-node:11
 
 USER root
 
