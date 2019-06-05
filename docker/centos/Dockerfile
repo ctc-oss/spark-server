@@ -12,7 +12,9 @@ COPY docker/centos/.s2i/bin/assemble /usr/libexec/s2i
 
 COPY . /tmp/src
 
-RUN chown -R 1001:0 /tmp/src
+RUN PATH=$PATH:/opt/rh/rh-nodejs8/root/usr/bin npm install -g yarn
+
+RUN chown -R 1001:0 /tmp/src /opt/app-root/src
 
 USER 1001
 
