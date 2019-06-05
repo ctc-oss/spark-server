@@ -84,12 +84,12 @@ fi
 if [ "$NODE_ENV" != "production" ]; then
 
 	echo "---> Building your Node application from source"
-	npm install
+	yarn install ${YARN_ARGS}
 
 else
 
 	echo "---> Installing all dependencies"
-	NODE_ENV=development npm install
+	NODE_ENV=development yarn install ${YARN_ARGS}
 
 	#do not fail when there is no build script
 	echo "---> Building in production mode"

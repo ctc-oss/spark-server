@@ -16,6 +16,8 @@ RUN chown -R 1001:0 /tmp/src
 
 USER 1001
 
+RUN npm install -g yarn -s &>/dev/null
+
 RUN /usr/libexec/s2i/assemble
 
 EXPOSE 5683
